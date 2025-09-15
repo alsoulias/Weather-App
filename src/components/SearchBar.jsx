@@ -17,6 +17,8 @@ export default function SearchBar({ onSearch, placeholder }){
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={placeholder}
+            className="lex-1 p-3 rounded-lg bg-gray-800 text-white placeholder-gray-400 
+             focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-md"
         />
     )
 }
