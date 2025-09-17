@@ -23,7 +23,11 @@ function App() {
       let url;
       const apiKey = import.meta.env.VITE_WEATHER_API_KEY
 
-      if (/^\d+$/.test(queryCity)){
+      if (typeof queryCity === "object" && queryCity.lat && queryCity.lon) {
+        // user picked from suggestions
+        url = `https://api.openweathermap.org/data/2.5/weather?lat=${queryCity.lat}&lon=${queryCity.lon}&appid=${apiKey}&units=${units}`;
+    } 
+      else if (/^\d+$/.test(queryCity)){
         //Input is only digits --> zipcode (default to US)
         url = `https://api.openweathermap.org/data/2.5/weather?zip=${queryCity},us&appid=${apiKey}&units=${units}`
       }
@@ -41,14 +45,15 @@ function App() {
 
       //Step 2: Use lat/lon for 5-day / 3-hour which is the API's free plan to get some hourly and daily forecast data
       const{lat, lon} = data.coord
-    const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=${units}`;
-      
-      const forecastRes = await fetch(forecastUrl)
+      const forecastRes = await fetch(
+        `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=${units}`
+      )
+
+      const forecastData = await forecastRes.json()
+
       if (!forecastRes.ok){
         throw new Error("Forecast data not available")
       }
-
-      const forecastData = await forecastRes.json()
 
       //Merge the data gathered: keep city name but add hourly/daily forecast
       setWeather({
